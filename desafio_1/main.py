@@ -10,6 +10,7 @@ def show_imgs(res, plt):
     plt.show()
     
 def save_imgs(folder_path, namefile, res, plt):
+    print("Processando -> ", namefile)
     cv2.imwrite(folder_path+"result_"+namefile, res)
     plt.savefig(folder_path+"result_histograma_"+namefile)
 
@@ -122,7 +123,7 @@ def remover_revoada_1(path_img):
     axes[0].set_ylabel('Pixels')
     
     axes[1].plot(img_detalhes_melhorados_hist, 'tab:red') 
-    axes[1].set_title('Img Agucada - Hitograma')
+    axes[1].set_title('Img Modificada - Hitograma')
     axes[1].set_xlabel('Nível de Cinza')
     axes[1].set_ylabel('Pixels')
 
@@ -159,7 +160,7 @@ def remover_revoada_2(path_img):
     axes[0].set_ylabel('Pixels')
     
     axes[1].plot(img_detalhes_melhorados_hist, 'tab:red') 
-    axes[1].set_title('Img Agucada - Hitograma')
+    axes[1].set_title('Img Modificada - Hitograma')
     axes[1].set_xlabel('Nível de Cinza')
     axes[1].set_ylabel('Pixels')
 
@@ -172,7 +173,7 @@ def agucar_1(path_img):
     if tamanho[0] >= 1000 or tamanho[1] >= 1000:
         img = cv2.resize(img, dsize=(0, 0), fx = 0.5, fy = 0.5, interpolation=cv2.INTER_CUBIC) 
     
-    img_sobel = filtro_laplaciano(img) 
+    img_sobel = filtro_sobel(img) 
     img_sobel_media = filtro_media(img_sobel)
     img_sobel_media_sub = cv2.addWeighted(img, 1.5, img_sobel_media, -0.7, 0)
     
@@ -204,7 +205,7 @@ def agucar_2(path_img):
     img_nit = filtro_nitidez(img)
     img_detalhes = cv2.addWeighted(img_nit, 1.5, img, -0.8, 0)
     img_detalhes_melhorados = cv2.addWeighted(img_detalhes, 1.5, img_nit, 0.2, 0)
-        
+    
     res = cv2.hconcat([img, img_detalhes_melhorados])
     
     img_hist = cv2.calcHist(img, [0], None, [256], [0, 256])
@@ -284,6 +285,10 @@ if __name__ == '__main__':
     res_6, plt_6 = remover_ruido(path_database_imgs+"Ruido_2.jpg")
     # show_imgs(res_6, plt_6)
     save_imgs(path_database_result, "Ruido_2.jpg", res_6, plt_6)
+    
+    res_7, plt_7 = remover_ruido(path_database_imgs+"Ruido_3.jpg")
+    # show_imgs(res_7, plt_7)
+    save_imgs(path_database_result, "Ruido_3.jpg", res_7, plt_7)
     
     #------------- Agucar -----------------#
     res_8, plt_8 = agucar_1(path_database_imgs+"Agucar_1.jpg")
