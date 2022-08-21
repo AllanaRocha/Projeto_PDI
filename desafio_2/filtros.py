@@ -1,8 +1,6 @@
 import cv2
-import os
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib
 
 # a convolucao é simplesmente uma multiplicação de elementos do kernel por alguma parte 
 # da imagem de origem para produzir um novo ponto de dados único representando um pixel, 
