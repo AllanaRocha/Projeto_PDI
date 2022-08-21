@@ -1,0 +1,75 @@
+import cv2
+import os
+import numpy as np
+from matplotlib import pyplot as plt
+from conversores import *
+import colorsys
+import colorsys    
+
+def HSVColor(img):
+    r,g,b = img.split()
+    Hdat = []
+    Sdat = []
+    Vdat = [] 
+    for rd,gn,bl in zip(r.getdata(),g.getdata(),b.getdata()) :
+        h,s,v = colorsys.rgb_to_hsv(rd/255.,gn/255.,bl/255.)
+        Hdat.append(int(h*255.))
+        Sdat.append(int(s*255.))
+        Vdat.append(int(v*255.))
+    r.putdata(Hdat)
+    g.putdata(Sdat)
+    b.putdata(Vdat)
+    
+    return np.stack([h, s, v], axis=-1)
+
+def run_histogram_equalization(image_path):#YCrCb
+    rgb_img = cv2.imread(image_path)
+    cv2.imshow('rgb_img', rgb_img)
+    cv2.waitKey(0)
+    
+    # convert from RGB color-space to YCrCb
+    ycrcb_img = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2YCrCb)
+
+    # equalize the histogram of the Y channel
+    ycrcb_img[:, :, 0] = cv2.equalizeHist(ycrcb_img[:, :, 0])
+
+    # convert back to RGB color-space from YCrCb
+    equalized_img = cv2.cvtColor(ycrcb_img, cv2.COLOR_YCrCb2BGR)
+
+    cv2.imshow('equalized_img', equalized_img)
+    cv2.waitKey(0)
+
+def run_histogram_equalization_2(image_path): #HSV
+    image = cv2.imread(image_path)
+    
+    # convert image from RGB to HSV
+    # image = image / 255.0
+    # print(image)
+    # img_hsv = converter_rgb_to_hsv(image)
+    # img_hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    img_hsv = colorsys.rgb_to_hsv(image)
+    cv2.imshow("img_hsv", img_hsv)
+    cv2.waitKey(0)
+    
+    # Histogram equalisation on the V-channel
+    img_hsv[:, :, 2] = cv2.equalizeHist(img_hsv[:, :, 2])
+
+    # convert image back from HSV to RGB
+    # image = converter_hsv_to_rgb(img_hsv)
+    image = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB)
+
+    cv2.imshow("equalizeHist", image)
+    cv2.waitKey(0)
+
+
+if __name__ == '__main__':
+    pathname = os.path.realpath(__file__)
+    pathname = os.path.split(pathname)[0]
+    path_database_imgs = os.path.join(pathname, 'imgs', '')
+    path_database_result = os.path.join(pathname, 'result', '')
+    
+    # run_histogram_equalization_2(path_database_imgs+"Clarear_1.png")
+    # run_histogram_equalization_2(path_database_imgs+"Clarear_2.png")
+    run_histogram_equalization_2(path_database_imgs+"Compressao_1.png")
+
+   
