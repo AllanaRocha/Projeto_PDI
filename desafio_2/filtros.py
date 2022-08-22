@@ -214,3 +214,21 @@ def filtro_gaussiano(img,ksize):
     filtro_kernel = _set_kernel_filtro_gaussiano(ksize)
     img = convolucao(img,filtro_kernel)
     return img
+
+def filtro_passa_baixa_verde(img,thresh=70,value=0):
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            if (img[i][j][0] + img[i][j][2]) < thresh:
+                img[i][j][1] = value
+                img[i][j][0] = value
+                img[i][j][2] = value
+    return img
+
+def filtro_passa_baixa_vermelho(img,thresh=70,value=0):
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            if (img[i][j][0] + img[i][j][1]) < thresh:
+                img[i][j][1] = value
+                img[i][j][0] = value
+                img[i][j][2] = value
+    return img
