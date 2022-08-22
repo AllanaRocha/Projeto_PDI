@@ -106,20 +106,24 @@ def remover_ruido(path_img, canal_rgb):
         # kernel_size = 5
         img = cv2.resize(img, dsize=(0, 0), fx = 0.5, fy = 0.5, interpolation=cv2.INTER_CUBIC) #reducao de 50% em relacao a img original
     
-    img_mediana = img.copy()
+    img_gaussiano = img.copy()
     
     # if not canal_rgb:
     #     for i in range(3):
     #         #passa o filtro de mediana nos 3 canais (RGB)
     #         img_mediana[:,:, i] = filtro_mediana(img_mediana[:,:, i], ksize=kernel_size) 
     # else:
-    img_mediana[:,:, canal_rgb] = filtro_mediana(img_mediana[:,:, canal_rgb], ksize=kernel_size) 
-    cv2.imshow('image',img_mediana[:,:, canal_rgb])
+    # img_mediana[:,:, canal_rgb] = filtro_mediana(img_mediana[:,:, canal_rgb], ksize=kernel_size) 
+    # cv2.imshow('image',img_mediana[:,:, canal_rgb])
+    # cv2.waitKey(0)
+    # plt.show()
+    img_gaussiano[:,:, canal_rgb] = filtro_gaussiano(img_gaussiano[:,:, canal_rgb], ksize=kernel_size) 
+    cv2.imshow('image',img_gaussiano[:,:, canal_rgb])
     cv2.waitKey(0)
     plt.show()
     
     #concatenando as imagens
-    res = cv2.hconcat([img, img_mediana])
+    res = cv2.hconcat([img, img_gaussiano])
     
     #Montando os histogramas
     colors = ("red", "green", "blue")

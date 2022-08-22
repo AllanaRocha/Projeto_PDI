@@ -182,3 +182,35 @@ def filtro_gamma(img, gamma=0.2):
     table = np.array([((i / 255.0) ** (1.0 / gamma)) * 255 for i in np.arange(0, 256)]).astype("uint8")
     img_gamma = cv2.LUT(img, table)
     return img_gamma
+
+def _set_kernel_filtro_gaussiano(ksize):
+    if ksize == 3:
+        filtro_kernel = np.array([[1,2,1],
+                                 [2,4,2],
+                                 [1,2,1]])
+        filtro_kernel = filtro_kernel * (1/16)
+
+    elif ksize == 5:
+        filtro_kernel = np.array([[1,4,7,4,1],
+                                 [4,16,26,16,4],
+                                 [7,26,41,26,7],
+                                 [4,16,26,16,4],
+                                 [1,4,7,4,1]])
+        filtro_kernel = filtro_kernel * (1/273)
+
+    elif ksize == 7:
+        filtro_kernel = np.array([[0,0,1,2,1,0,0],
+                                 [0,3,13,22,13,3,0],
+                                 [1,13,59,97,59,13,1],
+                                 [2,22,97,159,97,22,2],
+                                 [1,13,59,97,59,13,1],
+                                 [0,3,13,22,13,3,0],
+                                 [0,0,1,2,1,0,0]])
+        filtro_kernel = filtro_kernel * (1/1003)
+
+    return filtro_kernel
+
+def filtro_gaussiano(img,ksize):
+    filtro_kernel = _set_kernel_filtro_gaussiano(ksize)
+    img = convolucao(img,filtro_kernel)
+    return img
