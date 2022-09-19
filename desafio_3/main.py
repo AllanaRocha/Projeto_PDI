@@ -63,8 +63,12 @@ def segmentar_cachorro(path_img):
     
     #Aplicando operacao "AND" entre mask e img
     result = mask & img
-    result = filtro_mediana(result, 3)
+    result = filtro_dilatacao(result)
 
+    cv2.imshow('image',result)
+    cv2.waitKey(0)
+    plt.show()
+    
     #concatenando as imagens
     res = cv2.hconcat([img, result])
     
@@ -166,8 +170,8 @@ if __name__ == '__main__':
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
     
    #------------- SEGMENTAR CACHORRO -----------------#
-    # res_2, plt_2 = segmentar_cachorro(path_database_imgs+"image_02.png")
-    # show_imgs(res_2, plt_2)
+    res_2, plt_2 = segmentar_cachorro(path_database_imgs+"image_02.png")
+    show_imgs(res_2, plt_2)
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
     
     #------------- REMOVER RUIDO COELHO -----------------#
@@ -176,6 +180,6 @@ if __name__ == '__main__':
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
     
     #------------- PREENCHER LOGO -----------------#
-    res_4, plt_4 = preencher_logo(path_database_imgs+"image_05.png")
-    show_imgs(res_4, plt_4)
+    # res_4, plt_4 = preencher_logo(path_database_imgs+"image_05.png")
+    # show_imgs(res_4, plt_4)
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
