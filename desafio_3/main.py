@@ -10,10 +10,11 @@ def show_imgs(res, plt):
     cv2.waitKey(0)
     plt.show()
     
-def save_imgs(folder_path, namefile, res, plt):
+def save_imgs(folder_path, namefile, res, plt=''):
     print("Processando -> ", namefile)
     cv2.imwrite(folder_path+"result_"+namefile, res)
-    plt.savefig(folder_path+"result_histograma_"+namefile)
+    if plt != '':
+        plt.savefig(folder_path+"result_histograma_"+namefile)
 
 def remover_fundo(path_img):
     img = cv2.imread(path_img, 0)#gray
@@ -158,6 +159,24 @@ def preencher_logo(path_img):
     
     return res, plt
 
+def mirror_mermaid(path):
+    mermaid = cv2.imread(path + 'image_03a.png')
+    fin = cv2.imread(path + 'image_03b.png')
+    shark = cv2.imread(path + 'image_03c.png')
+    castle = cv2.imread(path + 'image_03d.png')
+    triangle = cv2.imread(path + 'image_03e.png')
+    human = cv2.imread(path + 'image_03f.png')
+
+    human_half = or_op(human,triangle)
+    not_fin = not_op(fin)
+    shark = xor_op(not_fin,shark)
+    shark = not_op(shark)
+    not_castle = not_op(castle)
+    fish_half = or_op(shark,not_castle)
+    mirror_mermaid = and_op(human_half,fish_half)
+    mermaid_n_mirror_mermaid = and_op(mermaid,mirror_mermaid)
+    return mermaid_n_mirror_mermaid
+
 if __name__ == '__main__':
     pathname = os.path.realpath(__file__)
     pathname = os.path.split(pathname)[0]
@@ -170,8 +189,8 @@ if __name__ == '__main__':
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
     
    #------------- SEGMENTAR CACHORRO -----------------#
-    res_2, plt_2 = segmentar_cachorro(path_database_imgs+"image_02.png")
-    show_imgs(res_2, plt_2)
+    # res_2, plt_2 = segmentar_cachorro(path_database_imgs+"image_02.png")
+    # show_imgs(res_2, plt_2)
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
     
     #------------- REMOVER RUIDO COELHO -----------------#
@@ -183,3 +202,7 @@ if __name__ == '__main__':
     # res_4, plt_4 = preencher_logo(path_database_imgs+"image_05.png")
     # show_imgs(res_4, plt_4)
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
+
+    #------------- SEREIA -----------------#
+    res_5 = mirror_mermaid(path_database_imgs)
+    save_imgs(path_database_result,'image_03.png',res_5)

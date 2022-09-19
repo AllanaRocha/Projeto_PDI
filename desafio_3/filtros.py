@@ -142,3 +142,15 @@ def binarizacao_otsu(gray):
     final_img[gray > final_thresh] = 255
     final_img[gray < final_thresh] = 0
     return final_img
+
+def and_op(img_1,img_2):
+    return np.array(img_1) & np.array(img_2)
+
+def or_op(img_1,img_2):
+    return np.array(img_1) | np.array(img_2)
+
+def xor_op(img_1,img_2):
+    return np.array(img_1) ^ np.array(img_2)
+
+def not_op(img):
+    return ~ np.array(img)
