@@ -18,6 +18,7 @@ def save_imgs(folder_path, namefile, res, plt=''):
 
 def remover_fundo(path_img):
     img = cv2.imread(path_img, 0)#gray
+    img_hist = img.copy()
     tamanho = img.shape
     
     if tamanho[0] >= 700 or tamanho[1] >= 700:
@@ -32,23 +33,23 @@ def remover_fundo(path_img):
     #montando o histograma
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4), sharey=True, tight_layout=True)
     
-    #TODO: OS HISTOGRAMAS ESTAO SENDO PLOTADOS ERRADOS 
-    # histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
-    # axes[0].plot(histogram)
-    # axes[0].set_title('Img Original - Hitograma')
-    # axes[0].set_xlabel('Valor do Pixel')
-    # axes[0].set_ylabel('Pixels')
+    histogram, bin_edges = np.histogram(img_hist, bins=256, range=(0, 256))
+    axes[0].plot(histogram)
+    axes[0].set_title('Img Original - Hitograma')
+    axes[0].set_xlabel('Valor do Pixel')
+    axes[0].set_ylabel('Pixels')
     
-    # histogram_proc, bin_edges_proc = np.histogram(img_mediana, bins=256, range=(0, 256))
-    # axes[1].plot(histogram_proc)
-    # axes[1].set_title('Img Processada - Hitograma')
-    # axes[1].set_xlabel('Valor do Pixel')
-    # axes[1].set_ylabel('Pixels')
+    histogram_proc, bin_edges_proc = np.histogram(img_mediana, bins=256, range=(0, 256))
+    axes[1].plot(histogram_proc)
+    axes[1].set_title('Img Processada - Hitograma')
+    axes[1].set_xlabel('Valor do Pixel')
+    axes[1].set_ylabel('Pixels')
     
     return res, plt
 
 def segmentar_cachorro(path_img):
     img = cv2.imread(path_img, 0)#gray
+    img_hist = img.copy()
     tamanho = img.shape
     
     if tamanho[0] >= 700 or tamanho[1] >= 700:
@@ -65,10 +66,6 @@ def segmentar_cachorro(path_img):
     #Aplicando operacao "AND" entre mask e img
     result = mask & img
     result = filtro_dilatacao(result)
-
-    cv2.imshow('image',result)
-    cv2.waitKey(0)
-    plt.show()
     
     #concatenando as imagens
     res = cv2.hconcat([img, result])
@@ -76,23 +73,23 @@ def segmentar_cachorro(path_img):
     #montando o histograma
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4), sharey=True, tight_layout=True)
     
-    #TODO: OS HISTOGRAMAS ESTAO SENDO PLOTADOS ERRADOS 
-    # histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
-    # axes[0].plot(histogram)
-    # axes[0].set_title('Img Original - Hitograma')
-    # axes[0].set_xlabel('Valor do Pixel')
-    # axes[0].set_ylabel('Pixels')
+    histogram, bin_edges = np.histogram(img_hist, bins=256, range=(0, 256))
+    axes[0].plot(histogram)
+    axes[0].set_title('Img Original - Hitograma')
+    axes[0].set_xlabel('Valor do Pixel')
+    axes[0].set_ylabel('Pixels')
     
-    # histogram_proc, bin_edges_proc = np.histogram(img_mediana, bins=256, range=(0, 256))
-    # axes[1].plot(histogram_proc)
-    # axes[1].set_title('Img Processada - Hitograma')
-    # axes[1].set_xlabel('Valor do Pixel')
-    # axes[1].set_ylabel('Pixels')
+    histogram_proc, bin_edges_proc = np.histogram(result, bins=256, range=(0, 256))
+    axes[1].plot(histogram_proc)
+    axes[1].set_title('Img Processada - Hitograma')
+    axes[1].set_xlabel('Valor do Pixel')
+    axes[1].set_ylabel('Pixels')
     
     return res, plt
 
 def remover_ruido(path_img):
     img = cv2.imread(path_img, 0)#gray
+    img_hist = img.copy()
     tamanho = img.shape
     
     if tamanho[0] >= 700 or tamanho[1] >= 700:
@@ -114,48 +111,53 @@ def remover_ruido(path_img):
     #montando o histograma
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4), sharey=True, tight_layout=True)
     
-    #TODO: OS HISTOGRAMAS ESTAO SENDO PLOTADOS ERRADOS 
-    # histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
-    # axes[0].plot(histogram)
-    # axes[0].set_title('Img Original - Hitograma')
-    # axes[0].set_xlabel('Valor do Pixel')
-    # axes[0].set_ylabel('Pixels')
+    histogram, bin_edges = np.histogram(img_hist, bins=256, range=(0, 256))
+    axes[0].plot(histogram)
+    axes[0].set_title('Img Original - Hitograma')
+    axes[0].set_xlabel('Valor do Pixel')
+    axes[0].set_ylabel('Pixels')
     
-    # histogram_proc, bin_edges_proc = np.histogram(img_mediana, bins=256, range=(0, 256))
-    # axes[1].plot(histogram_proc)
-    # axes[1].set_title('Img Processada - Hitograma')
-    # axes[1].set_xlabel('Valor do Pixel')
-    # axes[1].set_ylabel('Pixels')
+    histogram_proc, bin_edges_proc = np.histogram(img_mediana, bins=256, range=(0, 256))
+    axes[1].plot(histogram_proc)
+    axes[1].set_title('Img Processada - Hitograma')
+    axes[1].set_xlabel('Valor do Pixel')
+    axes[1].set_ylabel('Pixels')
     
     return res, plt
 
 def preencher_logo(path_img):
+    img_hist = cv2.imread(path_img, 0)#gray
     img = cv2.imread(path_img, 0)#gray
   
     img_erosion = filtro_erosao(img, k=5)
-    img_closing = fechamento(img_erosion)
+    for x in range(26):
+        if x == 0:
+            first = img_erosion
+        img_erosion = filtro_erosao(img_erosion, k=5)
+        img_not = not_op(first)
+        img_erosion = or_op(img_not,img_erosion)
 
-    res = cv2.hconcat([img, img_closing])
+    res = cv2.hconcat([img, img_erosion])
     
     #montando o histograma
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4), sharey=True, tight_layout=True)
     
-    #TODO: OS HISTOGRAMAS ESTAO SENDO PLOTADOS ERRADOS 
-    # histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
-    # axes[0].plot(histogram)
-    # axes[0].set_title('Img Original - Hitograma')
-    # axes[0].set_xlabel('Valor do Pixel')
-    # axes[0].set_ylabel('Pixels')
+    histogram, bin_edges = np.histogram(img_hist, bins=256, range=(0, 256))
+    axes[0].plot(histogram)
+    axes[0].set_title('Img Original - Hitograma')
+    axes[0].set_xlabel('Valor do Pixel')
+    axes[0].set_ylabel('Pixels')
     
-    # histogram_proc, bin_edges_proc = np.histogram(img_mediana, bins=256, range=(0, 256))
-    # axes[1].plot(histogram_proc)
-    # axes[1].set_title('Img Processada - Hitograma')
-    # axes[1].set_xlabel('Valor do Pixel')
-    # axes[1].set_ylabel('Pixels')
+    histogram_proc, bin_edges_proc = np.histogram(img_erosion, bins=256, range=(0, 256))
+    axes[1].plot(histogram_proc)
+    axes[1].set_title('Img Processada - Hitograma')
+    axes[1].set_xlabel('Valor do Pixel')
+    axes[1].set_ylabel('Pixels')
     
-    return res
+    return res, plt
 
 def mirror_mermaid(path):
+    img = cv2.imread(path + 'image_03a.png')
     mermaid = cv2.imread(path + 'image_03a.png')
     fin = cv2.imread(path + 'image_03b.png')
     shark = cv2.imread(path + 'image_03c.png')
@@ -171,7 +173,25 @@ def mirror_mermaid(path):
     fish_half = or_op(shark,not_castle)
     mirror_mermaid = and_op(human_half,fish_half)
     mermaid_n_mirror_mermaid = and_op(mermaid,mirror_mermaid)
-    return mermaid_n_mirror_mermaid
+    
+    res = cv2.hconcat([img, mermaid_n_mirror_mermaid])
+
+    #montando o histograma
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4), sharey=True, tight_layout=True)
+    
+    histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
+    axes[0].plot(histogram)
+    axes[0].set_title('Img Original - Hitograma')
+    axes[0].set_xlabel('Valor do Pixel')
+    axes[0].set_ylabel('Pixels')
+    
+    histogram_proc, bin_edges_proc = np.histogram(mermaid_n_mirror_mermaid, bins=256, range=(0, 256))
+    axes[1].plot(histogram_proc)
+    axes[1].set_title('Img Processada - Hitograma')
+    axes[1].set_xlabel('Valor do Pixel')
+    axes[1].set_ylabel('Pixels')
+    
+    return res, plt
 
 if __name__ == '__main__':
     pathname = os.path.realpath(__file__)
@@ -180,25 +200,25 @@ if __name__ == '__main__':
     path_database_result = os.path.join(pathname, 'result', '')
     
     #------------- SEPARAR TEXTO -----------------#
-    # res_1, plt_1 = remover_fundo(path_database_imgs+"image_01.png")
+    res_1, plt_1 = remover_fundo(path_database_imgs+"image_01.png")
     # show_imgs(res_1, plt_1)
-    # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
+    save_imgs(path_database_result, "image_01.png", res_1, plt_1)
     
    #------------- SEGMENTAR CACHORRO -----------------#
-    # res_2, plt_2 = segmentar_cachorro(path_database_imgs+"image_02.png")
+    res_2, plt_2 = segmentar_cachorro(path_database_imgs+"image_02.png")
     # show_imgs(res_2, plt_2)
-    # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
+    save_imgs(path_database_result, "image_02.png", res_2, plt_2)
     
     #------------- REMOVER RUIDO COELHO -----------------#
-    # res_3, plt_3 = remover_ruido(path_database_imgs+"image_04.png")
+    res_3, plt_3 = remover_ruido(path_database_imgs+"image_04.png")
     # show_imgs(res_3, plt_3)
-    # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
+    save_imgs(path_database_result, "image_04.png", res_3, plt_3)
     
     #------------- PREENCHER LOGO -----------------#
-    res_4 = preencher_logo(path_database_imgs+"image_05.png")
+    res_4, plt_4 = preencher_logo(path_database_imgs+"image_05.png")
     # show_imgs(res_4, plt_4)
-    save_imgs(path_database_result, "image_05.png", res_4)
+    save_imgs(path_database_result, "image_05.png", res_4, plt_4)
 
     #------------- SEREIA -----------------#
-    # res_5 = mirror_mermaid(path_database_imgs)
-    # save_imgs(path_database_result,'image_03.png',res_5)
+    res_5, plt_5 = mirror_mermaid(path_database_imgs)
+    save_imgs(path_database_result,'image_03.png',res_5, plt_5)
