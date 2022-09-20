@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+import random
 
 def equalizar_histograma(img):    
     m, n = img.shape 
@@ -94,21 +95,40 @@ def filtro_erosao(img, k=5):
             
     return imgErode
 
-def filtro_dilatacao(img):
+def is_intersection(img1,img2):
+    ret = False
+    for i in range(img1.shape[0]):
+        for j in range(img1.shape[1]):
+            # if img1[i,j] == img2[i,j]:
+            if img1[i,j] == img2[i,j] and img1[i,j] == 0:
+                ret = True
+    return ret
+
+def init_255(img):
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            img[i][j] = 255
+    return img
+
+def init_copy(img,copy):
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            img[i][j] = copy[i][j]
+    return img
+
+def filtro_dilatacao(img,SED = np.array([[0,1,0], [1,1,1],[0,1,0]]),x=1,y=1):
     p,q= img.shape
-    imgDilate= np.zeros((p,q), dtype=np.uint8)
-    
-    #elemento estruturante
-    SED= np.array([[0,1,0], [1,1,1],[0,1,0]])
-    constant1= 1
+    imgDilate = np.zeros((p,q), dtype=np.uint8)             
+
+    constant1=1
     
     for i in range(constant1, p-constant1):
         for j in range(constant1,q-constant1):
             temp= img[i-constant1:i+constant1+1, j-constant1:j+constant1+1]
-            product= temp*SED
+            product= or_op(temp,SED)
             imgDilate[i,j]= np.max(product)
     
-    return imgDilate
+    return imgDilate 
 
 def binarizacao_otsu(gray):
     pixel_number = gray.shape[0] * gray.shape[1]
@@ -142,6 +162,12 @@ def binarizacao_otsu(gray):
     final_img[gray > final_thresh] = 255
     final_img[gray < final_thresh] = 0
     return final_img
+    
+def fechamento(img):
+    binr = binarizacao_otsu(img)
+    kernel = np.ones((3, 3), np.uint8)
+    closing = cv2.morphologyEx(binr, cv2.MORPH_CLOSE, kernel, iterations=1)
+    return closing
 
 def and_op(img_1,img_2):
     return np.array(img_1) & np.array(img_2)

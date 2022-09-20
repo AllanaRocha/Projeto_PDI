@@ -131,15 +131,11 @@ def remover_ruido(path_img):
 
 def preencher_logo(path_img):
     img = cv2.imread(path_img, 0)#gray
-    tamanho = img.shape
-    
-    if tamanho[0] >= 700 or tamanho[1] >= 700:
-        img = cv2.resize(img, dsize=(0, 0), fx = 0.5, fy = 0.5, interpolation=cv2.INTER_CUBIC) #reducao de 50% em relacao a img original
-            
+  
     img_erosion = filtro_erosao(img, k=5)
+    img_closing = fechamento(img_erosion)
 
-    #concatenando as imagens
-    res = cv2.hconcat([img, img_erosion])
+    res = cv2.hconcat([img, img_closing])
     
     #montando o histograma
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 4), sharey=True, tight_layout=True)
@@ -157,7 +153,7 @@ def preencher_logo(path_img):
     # axes[1].set_xlabel('Valor do Pixel')
     # axes[1].set_ylabel('Pixels')
     
-    return res, plt
+    return res
 
 def mirror_mermaid(path):
     mermaid = cv2.imread(path + 'image_03a.png')
@@ -199,10 +195,10 @@ if __name__ == '__main__':
     # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
     
     #------------- PREENCHER LOGO -----------------#
-    # res_4, plt_4 = preencher_logo(path_database_imgs+"image_05.png")
+    res_4 = preencher_logo(path_database_imgs+"image_05.png")
     # show_imgs(res_4, plt_4)
-    # save_imgs(path_database_result, "image_01.png", res_1, plt_1)
+    save_imgs(path_database_result, "image_05.png", res_4)
 
     #------------- SEREIA -----------------#
-    res_5 = mirror_mermaid(path_database_imgs)
-    save_imgs(path_database_result,'image_03.png',res_5)
+    # res_5 = mirror_mermaid(path_database_imgs)
+    # save_imgs(path_database_result,'image_03.png',res_5)
